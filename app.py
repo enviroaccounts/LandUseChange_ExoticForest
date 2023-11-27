@@ -4,11 +4,12 @@ import plotly.graph_objects as go
 
 def load_forest_land_use_data():
     """Loads forest land use change data."""
-    return pd.read_csv("static/data/LandUseChange_Forest_1990_2016.csv")
+    return pd.read_csv("static/data/LandUseChange_ExoticForest_2008_2018.csv")
 
 def prepare_forest_land_use_chart_data(data_df):
     """Prepares data for the forest land use pie chart."""
-    land_use_data = data_df.iloc[0, 3:]  # land use columns start from the 4th column
+    # Extract data starting from the 'Producing Grassland' column
+    land_use_data = data_df.iloc[0, 3:]
     labels = land_use_data.index.tolist()
     values = land_use_data.values.tolist()
     return labels, values
@@ -24,9 +25,9 @@ def setup_dash_layout(app, fig_pie_chart):
             dcc.Graph(id='forest-land-use-pie-chart', figure=fig_pie_chart)
         ]),
         html.Div([  
-            html.H3(id='forest-land-use-pie-chart-description',children='Land uses converted from forestland since 1990.')
+            html.H3(id='forest-land-use-pie-chart-description', children='Land uses converted into exotic forest between 2008 and 2018.')
         ])
-    ],id='forest-land-use-pie-chart-layout')
+    ], id='forest-land-use-pie-chart-layout')
 
 def create_app():
     """Creates and configures the Dash app."""
