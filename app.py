@@ -16,16 +16,39 @@ def prepare_forest_land_use_chart_data(data_df):
 
 def create_forest_land_use_pie_chart(labels, values):
     """Creates a pie chart for forest land use data."""
-    return go.Figure(data=[go.Pie(labels=labels, values=values)])
+    
+    # Calculate percentages and create custom text labels
+    total = sum(values)
+    percents = [(v / total * 100) for v in values]
+    custom_text = [f"<1%" if 0 < p < 1 else f"{p:.0f}%" for p in percents]
+
+    pie_chart = go.Pie(
+        labels=labels,
+        values=values,
+        textinfo='label+percent',
+        hoverinfo='label+percent',
+        hovertemplate='<b>%{label}</b><br>%{percent:.0%}<br>Total: %{value}<extra></extra>',
+        texttemplate=custom_text  # Use custom text labels
+    )
+
+    fig = go.Figure(data=[pie_chart])
+    fig.update_layout(
+        title={
+            'text': "Land uses converted into exotic forest between 2008 and 2018.",
+            'y': 0.08,  # Adjust the vertical position
+            'x': 0.5,  # Center the title horizontally
+            'xanchor': 'center',
+            'yanchor': 'bottom'
+        }
+    )
+
+    return fig
 
 def setup_dash_layout(app, fig_pie_chart):
     """Sets up the layout of the Dash app."""
     app.layout = html.Div(children=[
         html.Div([
             dcc.Graph(id='forest-land-use-pie-chart', figure=fig_pie_chart)
-        ]),
-        html.Div([  
-            html.H3(id='forest-land-use-pie-chart-description', children='Land uses converted into exotic forest between 2008 and 2018.')
         ])
     ], id='forest-land-use-pie-chart-layout')
 
